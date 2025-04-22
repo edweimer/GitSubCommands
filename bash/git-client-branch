@@ -1,0 +1,38 @@
+#!/bin/bash
+
+set -e -u -o pipefail;
+
+progname=${0##*/};
+progname=${progname##*\\};
+progname=$(echo ${progname} | sed -e 's/-/ /;');
+
+function usage() {
+  returncode=${1:-0};
+
+  cat << EOF >&2
+Usage: ${progname} <client>
+EOF
+
+  exit ${returncode};
+}
+
+while getopts ":h" opt; do
+  case "${opt}" in
+    h)
+      usage;
+      ;;
+    *)
+      usage 1;
+      ;;
+  esac
+done;
+shift $((OPTIND - 1));
+
+if [ $# -ne 1 ]; then
+  usage 1;
+fi
+
+clientname="$1";
+
+git branch |
+  grep --ignore-case "\(^\** *\|/\)${clientname}/";
