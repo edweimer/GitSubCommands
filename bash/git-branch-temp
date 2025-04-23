@@ -1,0 +1,46 @@
+#!/bin/bash
+
+set -e -u -o pipefail;
+
+progname=${0##*/};
+progname=${progname##*\\};
+progname=$(echo ${progname} | sed -e 's/-/ /;');
+
+source for-git-subcommands.sh;
+
+optdelete="";
+
+function usage() {
+  returncode=${1:-0};
+
+  cat << EOF >&2
+Usage: ${progname} [-d]
+
+-d     delete fully merged branch
+EOF
+
+  exit ${returncode};
+}
+
+while getopts ":dh" opt; do
+  case "${opt}" in
+    d)
+      optdelete="-d";
+      ;;
+    h)
+      usage;
+      ;;
+    *)
+      usage 1;
+      ;;
+  esac
+done;
+shift $((OPTIND - 1));
+
+if [ $# -ne 0 ]; then
+  usage 1;
+fi
+
+git branch \
+  ${optdelete} \
+  "temp/${branch_current}";
