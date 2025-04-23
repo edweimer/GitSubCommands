@@ -16,7 +16,7 @@ function usage() {
   returncode=${1:-0};
 
   cat << EOF >&2
-Usage: ${progname} [-d]
+Usage: ${progname} [-d | -D]
 
 -d     delete fully merged branch
 -D     delete branch (even if not merged)
