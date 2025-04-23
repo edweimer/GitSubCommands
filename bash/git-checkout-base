@@ -1,0 +1,39 @@
+#!/bin/bash
+
+set -e -u -o pipefail;
+
+progdir=${0%/*};
+progdir=${0%\\*};
+progname=${0##*/};
+progname=${progname##*\\};
+progname=$(echo ${progname} | sed -e 's/-/ /;');
+
+source "${progdir}/for-git-subcommands.sh";
+
+function usage() {
+  returncode=${1:-0};
+
+  cat << EOF >&2
+Usage: ${progname} [<file>...]
+EOF
+
+  exit ${returncode};
+}
+
+while getopts ":h" opt; do
+  case "${opt}" in
+    h)
+      usage;
+      ;;
+    *)
+      usage 1;
+      ;;
+  esac;
+done;
+shift $((OPTIND - 1));
+
+if [ $# -gt 0 ]; then
+  git checkout "${branch_base}" "$@";
+else
+  git checkout "${branch_base}";
+fi;
